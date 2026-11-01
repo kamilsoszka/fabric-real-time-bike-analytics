@@ -4,6 +4,21 @@ End-to-end real-time analytics solution built with Microsoft Fabric Trial using 
 
 The project demonstrates real-time ingestion, stream processing, KQL analytics, operational monitoring, visualization, alerting, and GitHub source control.
 
+
+## Project Screenshots
+
+### Microsoft Fabric workspace
+
+The workspace contains the synchronized Real-Time Dashboard, Eventhouse, KQL databases, Eventstream, and Activator artifacts.
+
+![Microsoft Fabric workspace with synchronized real-time analytics artifacts](workspace-overview.png)
+
+### Real-Time Dashboard
+
+The operational dashboard presents live KPIs, the top neighbourhoods by available bikes, and neighbourhood-level availability data.
+
+![Microsoft Fabric Real-Time Dashboard for London Bike Share availability](real-time-dashboard.png)
+
 ## Solution Overview
 
 The solution continuously processes London Bike Share events and supports two independent data paths:
