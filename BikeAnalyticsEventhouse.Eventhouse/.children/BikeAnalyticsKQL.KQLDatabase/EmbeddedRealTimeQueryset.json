@@ -1,0 +1,40 @@
+{
+  "queryset": {
+    "version": "1.0.0",
+    "dataSources": [
+      {
+        "id": "cc8441e6-ac5c-4082-88ac-88dc8e6358f5",
+        "clusterUri": "https://trd-979vtskyjfnw1w5v38.z6.kusto.fabric.microsoft.com",
+        "type": "Fabric",
+        "databaseItemId": "b16290ce-b24c-4540-8923-8933b0776be6"
+      }
+    ],
+    "tabs": [
+      {
+        "id": "8c7e28d2-bb0c-4cac-8797-5f63c051a536",
+        "content": "// Count all records ingested into the raw bike-share table\n// BikeShareRaw\n// | count\n\n// Inspect the raw table schema and sample values\n// BikeShareRaw\n// | take 10\n\n// Validate null values, identifiers, coordinates, and bike availability\nBikeShareRaw\n| summarize\n    TotalRows = count(),\n    NullBikepointID = countif(isempty(BikepointID)),\n    NullStreet = countif(isempty(Street)),\n    NullNeighbourhood = countif(isempty(Neighbourhood)),\n    InvalidLatitude = countif(Latitude < -90 or Latitude > 90),\n    InvalidLongitude = countif(Longitude < -180 or Longitude > 180),\n    NegativeBikeCount = countif(No_Bikes < 0),\n    NegativeEmptyDockCount = countif(No_Empty_Docks < 0)",
+        "title": "Raw Data Validation",
+        "dataSourceId": "cc8441e6-ac5c-4082-88ac-88dc8e6358f5"
+      },
+      {
+        "id": "fc016ba3-b852-4e73-b4b4-6ef7819aa48c",
+        "content": "// Show the latest availability snapshot by neighbourhood\nBikeShareRaw\n| summarize arg_max(ingestion_time(), *) by BikepointID\n| summarize\n    TotalBikes = sum(No_Bikes),\n    TotalEmptyDocks = sum(No_Empty_Docks),\n    BikePoints = dcount(BikepointID)\n    by Neighbourhood\n| extend TotalDocks = TotalBikes + TotalEmptyDocks\n| extend AvailabilityPercent = round(100.0 * TotalBikes / TotalDocks, 1)\n| order by TotalBikes desc\n\n\n",
+        "title": "Live Operations",
+        "dataSourceId": "cc8441e6-ac5c-4082-88ac-88dc8e6358f5"
+      },
+      {
+        "id": "19e7530e-a70c-44cd-a01c-83153cd6ba6d",
+        "content": "// Validate the minute-level neighbourhood aggregation\nBikeAvailabilityMinute\n| summarize\n    TotalRows = count(),\n    Neighbourhoods = dcount(Neighbourhood),\n    TimeWindows = dcount(Window_End_Time),\n    NullNeighbourhood = countif(isempty(Neighbourhood)),\n    InvalidBikeCount = countif(TotalBikes < 0)",
+        "title": "Minute Aggregation Validation",
+        "dataSourceId": "cc8441e6-ac5c-4082-88ac-88dc8e6358f5"
+      },
+      {
+        "id": "c5575455-5875-4692-9cd9-e31ef409f8ce",
+        "content": "// Show the total bike availability trend across all neighbourhoods\nBikeAvailabilityMinute\n| summarize TotalAvailableBikes = sum(TotalBikes) by Window_End_Time\n| order by Window_End_Time asc\n| render timechart",
+        "title": "Minute Availability Trend",
+        "dataSourceId": "cc8441e6-ac5c-4082-88ac-88dc8e6358f5"
+      }
+    ],
+    "querysetType": "Embedded"
+  }
+}

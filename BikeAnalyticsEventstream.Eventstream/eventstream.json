@@ -1,0 +1,245 @@
+{
+  "sources": [
+    {
+      "id": "1917f316-9462-4372-98fa-80925d100047",
+      "name": "BikeShareSource",
+      "type": "SampleData",
+      "properties": {
+        "type": "Bicycles"
+      }
+    }
+  ],
+  "destinations": [
+    {
+      "id": "15baac60-0b7b-4d97-a4b4-61d265e84518",
+      "name": "BikeAnalyticsDestination",
+      "type": "Eventhouse",
+      "properties": {
+        "dataIngestionMode": "DirectIngestion",
+        "workspaceId": "00000000-0000-0000-0000-000000000000",
+        "itemId": "b0776be6-8933-8923-4540-b24cb16290ce",
+        "tableName": "BikeShareRaw",
+        "connectionName": "BikeShareRawConnection",
+        "mappingRuleName": "BikeShareRaw_mapping"
+      },
+      "inputNodes": [
+        {
+          "name": "BikeAnalyticsEventstream-stream"
+        }
+      ],
+      "inputSchemas": [
+        {
+          "name": "BikeAnalyticsEventstream-stream",
+          "schema": {
+            "columns": [
+              {
+                "name": "BikepointID",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "Street",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "Neighbourhood",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "Latitude",
+                "type": "Float",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "Longitude",
+                "type": "Float",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "No_Bikes",
+                "type": "BigInt",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "No_Empty_Docks",
+                "type": "BigInt",
+                "fields": null,
+                "items": null
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "82406500-cb5f-4a13-9df8-65b95e84d3ec",
+      "name": "BikeAvailabilityDestination",
+      "type": "Eventhouse",
+      "properties": {
+        "dataIngestionMode": "ProcessedIngestion",
+        "workspaceId": "00000000-0000-0000-0000-000000000000",
+        "itemId": "b0776be6-8933-8923-4540-b24cb16290ce",
+        "databaseName": "BikeAnalyticsKQL",
+        "tableName": "BikeAvailabilityMinute",
+        "inputSerialization": {
+          "type": "Json",
+          "properties": {
+            "encoding": "UTF8"
+          }
+        }
+      },
+      "inputNodes": [
+        {
+          "name": "GroupBikeAvailabilityByNeighbourhood"
+        }
+      ],
+      "inputSchemas": [
+        {
+          "name": "GroupBikeAvailabilityByNeighbourhood",
+          "schema": {
+            "columns": [
+              {
+                "name": "Neighbourhood",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "TotalBikes",
+                "type": "Float",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "Window_End_Time",
+                "type": "DateTime",
+                "fields": null,
+                "items": null
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "streams": [
+    {
+      "id": "15051b88-28d9-4cdd-a25a-672a87a377fb",
+      "name": "BikeAnalyticsEventstream-stream",
+      "type": "DefaultStream",
+      "properties": {},
+      "inputNodes": [
+        {
+          "name": "BikeShareSource"
+        }
+      ]
+    }
+  ],
+  "operators": [
+    {
+      "name": "GroupBikeAvailabilityByNeighbourhood",
+      "type": "GroupBy",
+      "inputNodes": [
+        {
+          "name": "BikeAnalyticsEventstream-stream"
+        }
+      ],
+      "properties": {
+        "aggregations": [
+          {
+            "aggregateFunction": "Sum",
+            "arguments": [],
+            "column": {
+              "expressionType": "ColumnReference",
+              "node": null,
+              "columnName": "No_Bikes",
+              "columnPathSegments": []
+            },
+            "alias": "TotalBikes"
+          }
+        ],
+        "groupBy": [
+          {
+            "expressionType": "ColumnReference",
+            "node": null,
+            "columnName": "Neighbourhood",
+            "columnPathSegments": []
+          }
+        ],
+        "window": {
+          "type": "Tumbling",
+          "properties": {
+            "duration": {
+              "value": 1,
+              "unit": "Minute"
+            },
+            "offset": {
+              "value": 0,
+              "unit": "Second"
+            }
+          }
+        }
+      },
+      "inputSchemas": [
+        {
+          "name": "BikeAnalyticsEventstream-stream",
+          "schema": {
+            "columns": [
+              {
+                "name": "BikepointID",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "Street",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "Neighbourhood",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "Latitude",
+                "type": "Float",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "Longitude",
+                "type": "Float",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "No_Bikes",
+                "type": "BigInt",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "No_Empty_Docks",
+                "type": "BigInt",
+                "fields": null,
+                "items": null
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "compatibilityLevel": "1.1"
+}

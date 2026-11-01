@@ -1,0 +1,12 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Reflex",
+    "displayName": "BikeAvailabilityActivator",
+    "description": "Reflex Project created from Trigger Pane"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "8314d2c5-d2c6-8aaf-4e9d-9e57dd421c03"
+  }
+}
