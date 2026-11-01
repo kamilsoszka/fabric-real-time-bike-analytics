@@ -241,6 +241,6 @@ README.md
 
 The real-time ingestion, transformation, storage, validation, dashboard, alerting, and source-control components are operational.
 
-## Author
+## License
 
-Kamil Soszka
+This project is licensed under the terms specified in the [LICENSE](LICENSE) file.
