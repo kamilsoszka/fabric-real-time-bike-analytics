@@ -1,5 +1,5 @@
 {
-  "schema_version": 88,
+  "schema_version": 89,
   "flavor": "RTDashboard_Regular",
   "changeDetection": {
     "kind": "liveUpdates",
@@ -106,8 +106,8 @@
         "kpi__showMinMaxLabels": true,
         "kpi__conditionalFormattingEnabled": true,
         "kpi__valueFormat": {
-          "format": "automatic",
-          "maxDecimalPlaces": 2,
+          "format": "full",
+          "maxDecimalPlaces": 0,
           "showUnitLabel": false,
           "unit": "%"
         },
@@ -154,12 +154,42 @@
               "label": "Danger"
             }
           }
+        },
+        "kpi__conditionalFormatting_V2": {
+          "showBadges": false,
+          "showZoneMarks": true,
+          "ranges": [
+            {
+              "range": [
+                0,
+                33
+              ],
+              "label": "OK",
+              "labelIcon": "recommended"
+            },
+            {
+              "range": [
+                33,
+                67
+              ],
+              "label": "Warning",
+              "labelIcon": "recommended"
+            },
+            {
+              "range": [
+                67,
+                100
+              ],
+              "label": "Danger",
+              "labelIcon": "recommended"
+            }
+          ]
         }
       }
     },
     {
       "id": "05e77fc0-669c-40f2-a84a-71747799793a",
-      "title": "Total Available Empty Docks",
+      "title": "Empty Docks",
       "visualType": "kpi",
       "pageId": "e5b39fe1-1cd3-40de-a52c-934457228701",
       "layout": {
@@ -180,8 +210,8 @@
         "kpi__showMinMaxLabels": true,
         "kpi__conditionalFormattingEnabled": true,
         "kpi__valueFormat": {
-          "format": "automatic",
-          "maxDecimalPlaces": 2,
+          "format": "full",
+          "maxDecimalPlaces": 0,
           "showUnitLabel": false,
           "unit": "%"
         },
@@ -228,6 +258,36 @@
               "label": "Danger"
             }
           }
+        },
+        "kpi__conditionalFormatting_V2": {
+          "showBadges": false,
+          "showZoneMarks": true,
+          "ranges": [
+            {
+              "range": [
+                0,
+                33
+              ],
+              "label": "OK",
+              "labelIcon": "recommended"
+            },
+            {
+              "range": [
+                33,
+                67
+              ],
+              "label": "Warning",
+              "labelIcon": "recommended"
+            },
+            {
+              "range": [
+                67,
+                100
+              ],
+              "label": "Danger",
+              "labelIcon": "recommended"
+            }
+          ]
         }
       }
     },
@@ -272,10 +332,10 @@
         "xColumnTitle": "",
         "xAxisScale": "linear",
         "verticalLine": "",
-        "crossFilter": [],
         "crossFilterDisabled": false,
         "drillthroughDisabled": false,
         "forceAxisTicks": false,
+        "crossFilter": [],
         "drillthrough": [],
         "selectedDataOnLoad": {
           "all": true,
@@ -362,9 +422,12 @@
         "kind": "inline",
         "dataSourceId": "f0478628-4237-4fc0-81ec-1946a478d0b5"
       },
-      "text": "// Show the total bike availability trend across all neighbourhoods\r\nBikeAvailabilityMinute\r\n| summarize TotalAvailableBikes = sum(TotalBikes) by Window_End_Time\r\n| order by Window_End_Time asc\r\n| render timechart",
+      "text": "// Show the total bike availability trend\r\n// for the dashboard-selected time range.\r\n\r\nBikeAvailabilityMinute\r\n| where Window_End_Time between (_startTime .. _endTime)\r\n| summarize\r\n    TotalAvailableBikes = sum(TotalBikes)\r\n    by Window_End_Time\r\n| order by Window_End_Time asc\r\n| render timechart",
       "id": "92a6db2e-18d3-4322-a970-bcdaf5c9ae97",
-      "usedVariables": []
+      "usedVariables": [
+        "_endTime",
+        "_startTime"
+      ]
     }
   ],
   "embeddedApps": []
